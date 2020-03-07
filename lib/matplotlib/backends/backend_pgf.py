@@ -950,6 +950,9 @@ class FigureCanvasPgf(FigureCanvasBase):
     def get_renderer(self):
         return RendererPgf(self.figure, None, dummy=True)
 
+    def draw(self):
+        self.figure.draw(self.get_renderer())
+
 
 class FigureManagerPgf(FigureManagerBase):
     pass
