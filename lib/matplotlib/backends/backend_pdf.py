@@ -430,7 +430,6 @@ class Stream:
             self.file.write(compressed)
             self.compressobj = None
 
-
 class PdfFile:
     """PDF file object."""
 
@@ -2490,7 +2489,6 @@ class PdfPages:
         """
         self._file.newTextnote(text, positionRect)
 
-
 class FigureCanvasPdf(FigureCanvasBase):
     """
     The canvas the figure renders into.  Calls the draw and print fig
@@ -2505,17 +2503,22 @@ class FigureCanvasPdf(FigureCanvasBase):
 
     fixed_dpi = 72
 
-    def draw(self):
-        self.figure.draw(self.get_renderer())
+    def draw(self, filename):
+        self.figure.draw(self.get_renderer(filename))
 
     filetypes = {'pdf': 'Portable Document Format'}
 
     def get_default_filetype(self):
         return 'pdf'
 
-    def get_renderer(self, dpi=fixed_dpi, bbox_inches_restore=None, file=None):
-        self.figure.set_dpi(dpi)
+    def get_renderer(self, filename, dpi=fixed_dpi, bbox_inches_restore=None):
+        if isinstance(filename, PdfPages):
+            file = filename._file
+        else:
+            file = PdfFile(filename)
         width, height = self.figure.get_size_inches()
+        file.newPage(width, height)
+        self.figure.set_dpi(dpi)
         return MixedModeRenderer(
                 self.figure, width, height, dpi,
                 RendererPdf(file, dpi, height, width),
