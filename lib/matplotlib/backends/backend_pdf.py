@@ -7,7 +7,7 @@ import codecs
 import collections
 from datetime import datetime
 from functools import total_ordering
-from io import BytesIO
+from io import BytesIO, TextIOWrapper
 import itertools
 import logging
 import math
@@ -2503,32 +2503,20 @@ class FigureCanvasPdf(FigureCanvasBase):
 
     fixed_dpi = 72
 
-    def draw(self, filename):
+    def draw(self):
         self.figure.set_dpi(72)
-        width, height = self.figure.get_size_inches()
-        file = self.get_file(filename)
-        file.newPage(width, height)
-        self.figure.draw(self.get_renderer(file, width, height, self.fixed_dpi))
-        self.free_file(file)
-        os.remove(filename)
+        self.figure.draw(self.get_renderer())
 
     filetypes = {'pdf': 'Portable Document Format'}
 
     def get_default_filetype(self):
         return 'pdf'
 
-    def get_renderer(self, file, width, height):
-        dpi = 72
-        return MixedModeRenderer(
-                self.figure, width, height, dpi,
-                RendererPdf(file, dpi, height, width),
-                bbox_inches_restore=None)
-
-    def get_file(self, filename):
-        return PdfFile(filename)
-
-    def free_file(self, file):
-        file.close()
+    def get_renderer(self, dpi=fixed_dpi):
+        width, height = self.figure.get_size_inches()
+        f = PdfFile(BytesIO())
+        f.newPage(width, height)
+        return RendererPdf(f, dpi, height, width)
 
     def print_pdf(self, filename, *,
                   dpi=72,  # dpi to use for images
