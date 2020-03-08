@@ -2504,7 +2504,7 @@ class FigureCanvasPdf(FigureCanvasBase):
     fixed_dpi = 72
 
     def draw(self, filename):
-        self.figure.set_dpi(self.fixed_dpi)
+        self.figure.set_dpi(72)
         width, height = self.figure.get_size_inches()
         file = self.get_file(filename)
         file.newPage(width, height)
@@ -2517,14 +2517,15 @@ class FigureCanvasPdf(FigureCanvasBase):
     def get_default_filetype(self):
         return 'pdf'
 
-    def get_renderer(self, file, width, height, dpi, bbox_inches_restore=None):
+    def get_renderer(self, file, width, height):
+        dpi = 72
         return MixedModeRenderer(
                 self.figure, width, height, dpi,
                 RendererPdf(file, dpi, height, width),
-                bbox_inches_restore=bbox_inches_restore)
+                bbox_inches_restore=None)
 
-    def get_file(self, filename, metadata=None):
-        return PdfFile(filename, metadata=metadata)
+    def get_file(self, filename):
+        return PdfFile(filename)
 
     def free_file(self, file):
         file.close()

@@ -1224,6 +1224,22 @@ class FigureCanvasSVG(FigureCanvasBase):
         self.figure.draw(renderer)
         renderer.finalize()
 
+    def draw(self, filename):
+        self.figure.set_dpi(72.0)
+        pass
+
+    def get_file(self, filename):
+
+
+    def get_renderer(self):
+        dpi = 72
+        width, height = self.figure.get_size_inches()
+        w, h = width * 72, height * 72
+        return MixedModeRenderer(
+            self.figure, width, height, dpi,
+            RendererSVG(w, h, fh, filename, dpi),
+            bbox_inches_restore=None)
+
     def get_default_filetype(self):
         return 'svg'
 
