@@ -1225,7 +1225,6 @@ class FigureCanvasSVG(FigureCanvasBase):
         renderer.finalize()
 
     def draw(self):
-        self.figure.set_dpi(72.0)
         self.figure.draw(self.get_renderer())
 
     def get_renderer(self, dpi=fixed_dpi):

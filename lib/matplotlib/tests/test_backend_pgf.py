@@ -289,3 +289,33 @@ def test_tex_restart_after_error():
     fig = plt.figure()  # start from scratch
     fig.suptitle(r"this is ok")
     fig.savefig(BytesIO(), format="pgf")
+
+
+@needs_pdflatex
+@pytest.mark.style('default')
+@pytest.mark.backend('pgf')
+@image_comparison(['pgf_draw'], style='default', extensions=['png'])
+# test draw function in canvas base
+def test_draw():
+    mpl.rcParams['pgf.texsystem'] = 'pdflatex'
+    fig, ax = plt.subplots(figsize=(6, 3.0), ncols=2, nrows=1,
+                           constrained_layout=True, sharey=True)
+    fig.set_constrained_layout_pads(wspace=0.03)
+
+    ax[0].plot(np.arange(4), 'r', label=r'Testing label 1')
+    ax[1].plot(np.arange(5), 'b', label=r'Testing label 2')
+    (leg_h0, leg_lab0) = ax[0].get_legend_handles_labels()
+    (leg_h1, leg_lab1) = ax[1].get_legend_handles_labels()
+
+    leg0 = ax[0].legend(leg_h0, leg_lab0, loc='lower center',
+                        bbox_to_anchor=(0.5, 1.07))
+
+    leg0.set_in_layout(True)
+    fig.canvas.draw()
+    # fig.draw(fig.canvas.get_renderer())
+    fig.set_constrained_layout(False)
+    leg0.remove()
+    fig_leg = fig.legend(*zip(leg_h0, leg_h1), *zip(leg_lab0, leg_lab1),
+                         loc='lower center', ncol=2, columnspacing=5,
+                         bbox_to_anchor=(0.5, 0.85))
+    fig.savefig('pgf_draw.png', dpi=200)

@@ -2504,7 +2504,6 @@ class FigureCanvasPdf(FigureCanvasBase):
     fixed_dpi = 72
 
     def draw(self):
-        self.figure.set_dpi(72)
         self.figure.draw(self.get_renderer())
 
     filetypes = {'pdf': 'Portable Document Format'}
